@@ -1,0 +1,26 @@
+# api/src/main/resources/application-dev.yml
+
+# 서버 포트 설정
+server:
+  port: 8080
+
+# 데이터베이스 설정 (개발용 H2 인메모리 DB 사용)
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+
+  # JPA 및 하이버네이트 설정 (개발 시에는 DDL 자동 생성 및 SQL 로깅 활성화)
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # 앱 실행 시 스키마를 생성하고 종료 시 삭제
+    properties:
+      hibernate:
+        format_sql: true # SQL 쿼리를 예쁘게 포맷팅
+        show_sql: true # 실행되는 SQL 쿼리를 로그로 보여줌
+  h2:
+    console:
+      enabled: true # 웹 브라우저에서 DB를 볼 수 있는 콘솔 활성화
+      path: /h2-console # 콘솔 접속 경로

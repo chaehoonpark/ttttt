@@ -1,0 +1,22 @@
+# api/src/main/resources/application-prod.yml
+
+# 서버 포트 설정
+server:
+  port: 80
+
+# 데이터베이스 설정 (운영용 DB 정보 - 예: MySQL)
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://your-production-db-host:3306/your_db
+    username: user
+    password: password
+
+  # JPA 및 하이버네이트 설정 (운영 시에는 스키마 자동 생성 비활성화)
+  jpa:
+    hibernate:
+      ddl-auto: none # 절대 스키마를 건드리지 않음
+    properties:
+      hibernate:
+        format_sql: false
+        show_sql: false # 성능을 위해 SQL 로깅 비활성화
