@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.Mockito.*;
 
 class ModifyCompanyServiceTest extends AbstractServiceTest {
@@ -23,13 +24,13 @@ class ModifyCompanyServiceTest extends AbstractServiceTest {
     private CompanyRepository companyRepository;
 
     private CompanyJpaEntity createCompanyEntity(Long id) {
-        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
+        return FM.giveMeBuilder(CompanyJpaEntity.class)
             .set("id", id)
             .sample();
     }
 
     private ModifyCompanyServiceRequest createModifyRequest(Long companyId) {
-        return fixtureMonkey.giveMeBuilder(ModifyCompanyServiceRequest.class)
+        return FM.giveMeBuilder(ModifyCompanyServiceRequest.class)
             .set("companyId", companyId)
             .sample();
     }

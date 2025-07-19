@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -20,7 +21,7 @@ class RegisterCompanyServiceTest extends AbstractServiceTest {
     private CompanyRepository companyRepository;
 
     private RegisterCompanyServiceRequest createRegisterRequest() {
-        return fixtureMonkey.giveMeOne(RegisterCompanyServiceRequest.class);
+        return FM.giveMeOne(RegisterCompanyServiceRequest.class);
     }
 
     @Test

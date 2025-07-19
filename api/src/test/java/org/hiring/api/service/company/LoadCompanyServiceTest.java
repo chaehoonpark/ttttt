@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -41,7 +42,7 @@ class LoadCompanyServiceTest extends AbstractServiceTest {
         // given
         Long companyId = 1L;
         CompanyJpaEntity entity = createCompanyEntity(companyId);
-        Company company = fixtureMonkey.giveMeOne(Company.class);
+        Company company = FM.giveMeOne(Company.class);
 
         when(companyRepository.findById(companyId)).thenReturn(Optional.of(entity));
         when(companyMapper.toModel(entity)).thenReturn(company);
@@ -71,7 +72,7 @@ class LoadCompanyServiceTest extends AbstractServiceTest {
     void loadCompanies_WithValidCondition_ShouldReturnPagedResult() {
         // given
         LoadCompaniesServiceRequest request = createLoadRequest();
-        Company company = fixtureMonkey.giveMeBuilder(Company.class)
+        Company company = FM.giveMeBuilder(Company.class)
                                                .set("jobs", null)
                                                        .sample();
 
@@ -87,7 +88,7 @@ class LoadCompanyServiceTest extends AbstractServiceTest {
     }
 
     private CompanyJpaEntity createCompanyEntity(Long id) {
-        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
+        return FM.giveMeBuilder(CompanyJpaEntity.class)
                             .set("id", id)
                             .sample();
     }

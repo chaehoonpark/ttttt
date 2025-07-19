@@ -29,6 +29,9 @@ spring:
     init:
       mode: always
 
+  cache:
+    type: simple
+
 # 로깅 설정
 logging:
   level:

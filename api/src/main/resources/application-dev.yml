@@ -24,3 +24,11 @@ spring:
     console:
       enabled: true # 웹 브라우저에서 DB를 볼 수 있는 콘솔 활성화
       path: /h2-console # 콘솔 접속 경로
+
+  data:
+    redis:
+      host: localhost # Redis 서버 주소
+      port: 6379      # Redis 서버 포트
+
+  cache:
+    type: redis # Spring Boot 캐시 추상화의 구현체로 Redis를 사용하도록 설정

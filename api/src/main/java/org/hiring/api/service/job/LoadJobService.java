@@ -10,6 +10,7 @@ import org.hiring.api.repository.job.JobRepository;
 import org.hiring.api.repository.job.query.JobQueryRepository;
 import org.hiring.api.repository.job.query.JobSearchCondition;
 import org.hiring.api.service.job.usecase.LoadJobUseCase;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +30,7 @@ public class LoadJobService implements LoadJobUseCase {
     }
 
     @Override
+    @Cacheable(value = "jobs", key = "#request")
     public PagedResult<Job> loadJobs(final LoadJobsServiceRequest request) {
         JobSearchCondition condition = JobSearchCondition.builder()
             .keyword(request.keyword())

@@ -11,9 +11,12 @@ import org.hiring.api.repository.company.CompanyRepository;
 import org.hiring.api.repository.company.query.CompanyQueryRepository;
 import org.hiring.api.repository.company.query.CompanySearchCondition;
 import org.hiring.api.service.company.usecase.LoadCompanyUseCase;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class LoadCompanyService implements LoadCompanyUseCase {
 
@@ -22,6 +25,7 @@ public class LoadCompanyService implements LoadCompanyUseCase {
     private final CompanyQueryRepository companyQueryRepository;
 
     @Override
+    @Cacheable(value = "companies", key = "#request")
     public PagedResult<Company> loadCompanies(final LoadCompaniesServiceRequest request) {
         CompanySearchCondition condition = CompanySearchCondition.builder()
             .address(request.location())

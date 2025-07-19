@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +43,7 @@ class LoadJobServiceTest extends AbstractServiceTest {
         // given
         Long jobId = 1L;
         JobJpaEntity entity = createJobEntity(jobId);
-        Job job = fixtureMonkey.giveMeOne(Job.class);
+        Job job = FM.giveMeOne(Job.class);
 
         when(jobRepository.findById(jobId)).thenReturn(Optional.of(entity));
         when(jobMapper.toModel(entity)).thenReturn(job);
@@ -70,7 +71,7 @@ class LoadJobServiceTest extends AbstractServiceTest {
     void loadJobs_WithValidCondition_ShouldReturnPagedResult() {
         // given
         LoadJobsServiceRequest request = createLoadRequest();
-        Job job = fixtureMonkey
+        Job job = FM
                 .giveMeBuilder(Job.class)
                 .set("employmentType", EmploymentType.FULL_TIME)
                 .set("experienceLevel", ExperienceLevel.ANY)
@@ -88,7 +89,7 @@ class LoadJobServiceTest extends AbstractServiceTest {
     }
 
     private JobJpaEntity createJobEntity(Long id) {
-        return fixtureMonkey.giveMeBuilder(JobJpaEntity.class).set("id", id).sample();
+        return FM.giveMeBuilder(JobJpaEntity.class).set("id", id).sample();
     }
 
     private LoadJobsServiceRequest createLoadRequest() {

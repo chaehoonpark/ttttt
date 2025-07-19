@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.Mockito.*;
 
 class RemoveCompanyServiceTest extends AbstractServiceTest {
@@ -56,7 +57,7 @@ class RemoveCompanyServiceTest extends AbstractServiceTest {
     }
 
     private CompanyJpaEntity createCompanyEntity(Long id) {
-        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
+        return FM.giveMeBuilder(CompanyJpaEntity.class)
                             .set("id", id)
                             .sample();
     }

@@ -6,8 +6,10 @@ import org.hiring.api.entity.CompanyJpaEntity;
 import org.hiring.api.repository.company.CompanyRepository;
 import org.hiring.api.service.company.usecase.ModifyCompanyUseCase;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ModifyCompanyService implements ModifyCompanyUseCase {
 

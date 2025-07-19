@@ -7,8 +7,10 @@ import org.hiring.api.repository.company.CompanyRepository;
 import org.hiring.api.repository.job.JobRepository;
 import org.hiring.api.service.job.usecase.RegisterJobUseCase;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RegisterJobService implements RegisterJobUseCase {
 
