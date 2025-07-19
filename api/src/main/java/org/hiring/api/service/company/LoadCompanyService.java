@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LoadCompanyService implements LoadCompanyUseCase {
@@ -24,7 +23,7 @@ public class LoadCompanyService implements LoadCompanyUseCase {
     private final CompanyQueryRepository companyQueryRepository;
 
     @Override
-    @Cacheable(value = "companies", key = "#request")
+//    @Cacheable(value = "companies", key = "#request")
     public PagedResult<Company> loadCompanies(final LoadCompaniesServiceRequest request) {
         final var condition = CompanySearchCondition.builder()
             .address(request.location())
@@ -34,9 +33,9 @@ public class LoadCompanyService implements LoadCompanyUseCase {
             .offset(request.getOffset())
             .build();
 
-        final var companyEntities = companyQueryRepository.loadCompanies(condition);
+        final var companyEntities = companyQueryRepository.loadCompaniesPage(condition);
 
-        final var totalCount = companyQueryRepository.countCompanies(condition);
+//        final var totalCount = companyQueryRepository.countCompanies(condition);
 
         final var companies = companyEntities.stream()
             .map(companyMapper::toModel)
@@ -46,7 +45,7 @@ public class LoadCompanyService implements LoadCompanyUseCase {
             companies,
             request.page(),
             request.size(),
-            totalCount
+            companyEntities.getTotalElements()
         );
     }
 

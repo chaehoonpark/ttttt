@@ -2,17 +2,11 @@ package org.hiring.api.service.job;
 
 
 import org.hiring.api.common.AbstractServiceTest;
-import org.hiring.api.entity.CompanyJpaEntity;
 import org.hiring.api.entity.JobJpaEntity;
 import org.hiring.api.entity.enums.CityEnum;
 import org.hiring.api.entity.enums.DistrictEnum;
 import org.hiring.api.entity.enums.EmploymentType;
-import org.hiring.api.mapper.CompanyMapper;
-import org.hiring.api.repository.company.CompanyRepository;
-import org.hiring.api.repository.company.query.CompanyQueryRepository;
 import org.hiring.api.repository.job.query.JobQueryRepository;
-import org.hiring.api.service.company.LoadCompaniesServiceRequest;
-import org.hiring.api.service.company.LoadCompanyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +17,6 @@ import org.springframework.cache.Cache;
 import java.util.List;
 import java.util.Objects;
 
-import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -69,7 +62,7 @@ public class LoadJobServiceCachingTest extends AbstractServiceTest {
     }
 
     private LoadJobsServiceRequest createLoadJobsRequest(String keyword) {
-        return FM.giveMeBuilder(LoadJobsServiceRequest.class)
+        return fixtureMonkey.giveMeBuilder(LoadJobsServiceRequest.class)
                  .set("keyword", keyword)
                  .set("city", CityEnum.SEOUL)
                  .set("district", DistrictEnum.SEOUL_GANGNAM)
@@ -80,7 +73,7 @@ public class LoadJobServiceCachingTest extends AbstractServiceTest {
     }
 
     private JobJpaEntity createJobJpaEntity() {
-        return FM.giveMeBuilder(JobJpaEntity.class)
+        return fixtureMonkey.giveMeBuilder(JobJpaEntity.class)
                 .set("id", null)
                 .sample();
     }

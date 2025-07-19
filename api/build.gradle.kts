@@ -24,6 +24,8 @@ dependencies {
 //    implementation(project(":common"))
     implementation(project(":jpa"))
 
+    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+
     runtimeOnly("com.h2database:h2")
 
     val lombokVersion = "1.18.32"

@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hiring.api.common.testFixture.TestFixture.FM;
 
 @Import({JobQueryRepositoryImpl.class})
 @DisplayName("JobQueryRepository 테스트")
@@ -290,7 +289,7 @@ class JobQueryRepositoryImplTest extends AbstractJpaTest {
 
     // --- Helper methods --- //
     private CompanyJpaEntity createCompany(String name, String industry) {
-        return FM
+        return fixtureMonkey
                 .giveMeBuilder(CompanyJpaEntity.class)
                 .set("id", null)
                 .set("name", name)
@@ -300,7 +299,7 @@ class JobQueryRepositoryImplTest extends AbstractJpaTest {
     }
 
     private JobJpaEntity createJob(String title, CompanyJpaEntity company) {
-        return FM
+        return fixtureMonkey
                 .giveMeBuilder(JobJpaEntity.class)
                 .set("id", null)
                 .set("title", title)
@@ -316,7 +315,7 @@ class JobQueryRepositoryImplTest extends AbstractJpaTest {
     }
 
     private JobJpaEntity createJobWithLocation(String title, CompanyJpaEntity company, CityEnum city, DistrictEnum district) {
-        return FM
+        return fixtureMonkey
                 .giveMeBuilder(JobJpaEntity.class)
                 .set("id", null)
                 .set("title", title)
@@ -332,7 +331,7 @@ class JobQueryRepositoryImplTest extends AbstractJpaTest {
     }
 
     private JobJpaEntity createJobWithEmploymentType(String title, CompanyJpaEntity company, EmploymentType employmentType) {
-        return FM
+        return fixtureMonkey
                 .giveMeBuilder(JobJpaEntity.class)
                 .set("id", null)
                 .set("title", title)
@@ -348,7 +347,7 @@ class JobQueryRepositoryImplTest extends AbstractJpaTest {
     }
 
     private JobJpaEntity createComplexJob(String title, CompanyJpaEntity company, CityEnum city, DistrictEnum district, EmploymentType employmentType) {
-        return FM
+        return fixtureMonkey
                 .giveMeBuilder(JobJpaEntity.class)
                 .set("id", null)
                 .set("title", title)

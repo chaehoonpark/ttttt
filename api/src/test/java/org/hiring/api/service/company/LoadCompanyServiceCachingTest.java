@@ -2,8 +2,6 @@ package org.hiring.api.service.company;
 
 import org.hiring.api.common.AbstractServiceTest;
 import org.hiring.api.entity.CompanyJpaEntity;
-import org.hiring.api.mapper.CompanyMapper;
-import org.hiring.api.repository.company.CompanyRepository;
 import org.hiring.api.repository.company.query.CompanyQueryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +13,6 @@ import org.springframework.cache.Cache;
 import java.util.List;
 import java.util.Objects;
 
-import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -56,12 +53,12 @@ public class LoadCompanyServiceCachingTest extends AbstractServiceTest {
         loadCompanyService.loadCompanies(request3);
 
         // then - 검증
-        verify(companyQueryRepository, times(2)).loadCompanies(any());
+        verify(companyQueryRepository, times(2)).loadCompaniesPage(any());
         verify(companyQueryRepository, times(2)).countCompanies(any());
     }
 
     private LoadCompaniesServiceRequest createLoadCompaniesRequest(String keyword) {
-        return FM
+        return fixtureMonkey
                 .giveMeBuilder(LoadCompaniesServiceRequest.class)
                 .set("name", "Test Company")             // ✅ 실제 필드 고정
                 .set("location", "Seoul")                // ✅ 실제 필드 고정
@@ -73,7 +70,7 @@ public class LoadCompanyServiceCachingTest extends AbstractServiceTest {
     }
 
     private CompanyJpaEntity createCompany() {
-        return FM.giveMeBuilder(CompanyJpaEntity.class)
+        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
                  .set("id", null)
                  .sample();
     }

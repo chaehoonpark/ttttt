@@ -1,15 +1,18 @@
 package org.hiring.api.repository.company.query;
 
-import static org.hiring.api.entity.QCompanyJpaEntity.companyJpaEntity;
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.hiring.api.entity.CompanyJpaEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+
+import static org.hiring.api.entity.QCompanyJpaEntity.companyJpaEntity;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,6 +33,22 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
             .offset(condition.getOffset())
             .limit(condition.getLimit())
             .fetch();
+    }
+
+    @Override
+    public Page<CompanyJpaEntity> loadCompaniesPage(final CompanySearchCondition condition) {
+         final var query = queryFactory
+                .selectFrom(companyJpaEntity)
+                .where(
+                        addressContains(condition.getAddress()),
+                        industryContains(condition.getIndustry()),
+                        keywordsContains(condition.getKeywords())
+                )
+                .orderBy(companyJpaEntity.createdAt.desc())
+                .offset(condition.getOffset())
+                .limit(condition.getLimit());
+
+        return PageableExecutionUtils.getPage(query.fetch(), Pageable.ofSize(condition.getLimit()), query::fetchCount);
     }
 
 

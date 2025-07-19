@@ -2,6 +2,7 @@ package org.hiring.api.controller.company;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.hiring.api.common.AbstractControllerTest;
+import org.hiring.api.common.testFixture.TestFixtureFactory;
 import org.hiring.api.domain.Company;
 import org.hiring.api.service.company.LoadCompaniesServiceRequest;
 import org.hiring.api.service.company.ModifyCompanyServiceRequest;
@@ -16,17 +17,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.stream.Stream;
 
-import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,19 +59,24 @@ class CompanyControllerTest extends AbstractControllerTest {
         @DisplayName("[성공] 유효한 정보로 등록 시 200 OK를 반환한다")
         void success() throws Exception {
             // given
-            RegisterCompanyApiRequest request = FM
+            final var request = fixtureMonkey
                     .giveMeBuilder(RegisterCompanyApiRequest.class)
                     .set("logoUrl", "https://test.com/logo.png")
                     .sample();
 
             // when
-            ResultActions actions = mockMvc.perform(post("/api/v1/companies")
+            final var actions = mockMvc.perform(post("/api/v1/companies")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            actions.andExpect(status().isCreated());
-            verify(registerCompanyUseCase).registerCompany(any(RegisterCompanyServiceRequest.class));
+            actions
+                    .andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().isCreated());
+
+            then(registerCompanyUseCase)
+                    .should(times(1))
+                    .registerCompany(any(RegisterCompanyServiceRequest.class));
         }
 
         @DisplayName("[실패] API 명세에 맞지 않는 값으로 요청 시 400 Bad Request를 반환한다")
@@ -91,8 +100,8 @@ class CompanyControllerTest extends AbstractControllerTest {
         @DisplayName("[성공] 유효한 정보로 수정 시 200 OK를 반환한다")
         void success() throws Exception {
             // given
-            Long companyId = 1L;
-            ModifyCompanyApiRequest request = FM.giveMeOne(ModifyCompanyApiRequest.class);
+            final var companyId = 1L;
+            ModifyCompanyApiRequest request = fixtureMonkey.giveMeOne(ModifyCompanyApiRequest.class);
 
             // when
             ResultActions actions = mockMvc.perform(patch("/api/v1/companies/" + companyId)
@@ -144,7 +153,7 @@ class CompanyControllerTest extends AbstractControllerTest {
         void success() throws Exception {
             // given
             Long companyId = 1L;
-            Company mockCompany = FM.giveMeBuilder(Company.class).set("id", companyId).sample();
+            Company mockCompany = fixtureMonkey.giveMeBuilder(Company.class).set("id", companyId).sample();
             given(loadCompanyUseCase.loadCompany(companyId)).willReturn(mockCompany);
 
             // when
@@ -203,29 +212,33 @@ class CompanyControllerTest extends AbstractControllerTest {
     // --- MethodSource Providers ---
 
     static Stream<Arguments> provideInvalidRegisterRequests() {
-        return Stream.of(Arguments.of(FM
+        final var fixtureMonkey = TestFixtureFactory.getInstance();
+
+        return Stream.of(Arguments.of(fixtureMonkey
                         .giveMeBuilder(RegisterCompanyApiRequest.class)
                         .setNull("name")
                         .sample(), "name", "null"),
-                Arguments.of(FM
+                Arguments.of(fixtureMonkey
                         .giveMeBuilder(RegisterCompanyApiRequest.class)
                         .set("name", " ")
                         .sample(), "name", "blank"),
-                Arguments.of(FM
+                Arguments.of(fixtureMonkey
                         .giveMeBuilder(RegisterCompanyApiRequest.class)
                         .setNull("foundedYear")
                         .sample(), "foundedYear", "null"));
     }
 
     static Stream<Arguments> provideInvalidModifyRequests() {
-        return Stream.of(Arguments.of(FM
+        final var fixtureMonkey = TestFixtureFactory.getInstance();
+
+        return Stream.of(Arguments.of(fixtureMonkey
                 .giveMeBuilder(ModifyCompanyApiRequest.class)
                 .set("name", "a".repeat(101))
                 .sample(), "name", "too long"));
     }
 
     static Stream<Arguments> provideInvalidLoadRequests() {
-        MultiValueMap<String, String> params1 = new LinkedMultiValueMap<>();
+        final var params1 = new LinkedMultiValueMap<String, String>();
         params1.add("page", "0");
         params1.add("size", "10");
 
@@ -233,7 +246,7 @@ class CompanyControllerTest extends AbstractControllerTest {
         params2.add("page", "1");
         params2.add("size", "-1");
 
-        MultiValueMap<String, String> params3 = new LinkedMultiValueMap<>();
+        final var params3 = new LinkedMultiValueMap<String, String>();
         params3.add("size", "10");
 
         return Stream.of(Arguments.of(params1, "0", "10"),

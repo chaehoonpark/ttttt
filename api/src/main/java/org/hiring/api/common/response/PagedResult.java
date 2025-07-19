@@ -7,11 +7,12 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class PagedResult<T> {
+public class PagedResult<T> implements Iterable<T>{
     int page;
     int size;
     long totalCount;
@@ -36,5 +37,10 @@ public class PagedResult<T> {
 
     public boolean hasPrevious() {
         return page > 0;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return content.iterator();
     }
 }

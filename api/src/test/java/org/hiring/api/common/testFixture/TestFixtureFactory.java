@@ -9,13 +9,13 @@ import com.navercorp.fixturemonkey.api.plugin.SimpleValueJqwikPlugin;
 
 import java.util.List;
 
-public abstract class TestFixture {
+public abstract class TestFixtureFactory {
 
-    private TestFixture() {
+    private TestFixtureFactory() {
         throw new IllegalArgumentException("It's a utility class");
     }
 
-    public static final FixtureMonkey FM = FixtureMonkey.builder()
+    private static final FixtureMonkey FIXTURE_MONKEY = FixtureMonkey.builder()
             .defaultNotNull(true)
             .objectIntrospector(
                     new FailoverIntrospector(
@@ -34,4 +34,8 @@ public abstract class TestFixture {
             )
             .enableLoggingFail(false)
             .build();
+
+    public static FixtureMonkey getInstance(){
+        return FIXTURE_MONKEY;
+    }
 }

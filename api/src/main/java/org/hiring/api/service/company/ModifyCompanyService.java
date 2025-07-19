@@ -2,7 +2,6 @@ package org.hiring.api.service.company;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hiring.api.entity.CompanyJpaEntity;
 import org.hiring.api.repository.company.CompanyRepository;
 import org.hiring.api.service.company.usecase.ModifyCompanyUseCase;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,5 @@
 package org.hiring.api.repository.job.query;
 
-import static org.hiring.api.entity.QCompanyJpaEntity.companyJpaEntity;
-import static org.hiring.api.entity.QJobJpaEntity.jobJpaEntity;
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -13,6 +10,9 @@ import org.hiring.api.entity.enums.CityEnum;
 import org.hiring.api.entity.enums.DistrictEnum;
 import org.hiring.api.entity.enums.EmploymentType;
 import org.springframework.stereotype.Repository;
+
+import static org.hiring.api.entity.QCompanyJpaEntity.companyJpaEntity;
+import static org.hiring.api.entity.QJobJpaEntity.jobJpaEntity;
 
 @Repository
 @RequiredArgsConstructor

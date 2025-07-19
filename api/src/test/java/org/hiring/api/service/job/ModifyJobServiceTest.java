@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.Mockito.*;
 
 class ModifyJobServiceTest extends AbstractServiceTest {
@@ -29,7 +28,7 @@ class ModifyJobServiceTest extends AbstractServiceTest {
     void modifyJob_WithValidRequest_ShouldModifyJob() {
         // given
         Long jobId = 1L;
-        JobJpaEntity entity = spy(FM.giveMeOne(JobJpaEntity.class));
+        JobJpaEntity entity = spy(fixtureMonkey.giveMeOne(JobJpaEntity.class));
         ModifyJobServiceRequest request = new ModifyJobServiceRequest(
             jobId, 1L, "수정된 제목", "수정된 설명",
             null, null, null, 3000, 5000,

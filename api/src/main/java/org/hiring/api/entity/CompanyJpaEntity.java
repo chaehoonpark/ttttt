@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @Table(name = "company")
+@DynamicUpdate
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PRIVATE)
 @FieldDefaults(level = PRIVATE)

@@ -1,5 +1,6 @@
 package org.hiring.api.repository.company.query;
 
+import org.assertj.core.groups.Tuple;
 import org.hiring.api.common.AbstractJpaTest;
 import org.hiring.api.entity.CompanyJpaEntity;
 import org.hiring.api.repository.company.CompanyRepository;
@@ -11,9 +12,9 @@ import org.springframework.context.annotation.Import;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hiring.api.common.testFixture.TestFixture.FM;
+import static org.assertj.core.api.Assertions.tuple;
 
-@Import({CompanyQueryRepositoryImpl.class})
+@Import(CompanyQueryRepositoryImpl.class)
 @DisplayName("CompanyQueryRepository 테스트")
 class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
 
@@ -25,7 +26,7 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
 
     @Test
     @DisplayName("산업별 필터링이 정확히 동작한다")
-    void filterByIndustry() {
+    void filter_by_industry() {
         // given - 구분되는 데이터들
         List<CompanyJpaEntity> companies = List.of(
                 createCompany("IT회사1", "IT"),
@@ -33,22 +34,39 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
                 createCompany("금융회사", "금융"),
                 createCompany("제조회사", "제조")
         );
-        companyRepository.saveAll(companies);
+
+        final var savedCompanies = companyRepository.saveAll(companies);
         flushAndClear();
 
-        CompanySearchCondition condition = FM.giveMeBuilder(CompanySearchCondition.class)
+        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
                 .set("industry", "IT")
-                .setNull("address").setNull("keywords")
-                .set("offset", 0).set("limit", 10)
+                .setNull("address")
+                .setNull("keywords")
+                .set("offset", 0)
+                .set("limit", 10)
                 .sample();
 
         // when
-        List<CompanyJpaEntity> result = repository.loadCompanies(condition);
+        final var actualResult = repository.loadCompaniesPage(condition);
 
         // then - 결과로만 검증
-        assertThat(result).hasSize(2)
-                .extracting("industry")
-                .containsOnly("IT");
+        assertThat(actualResult)
+                .isNotEmpty()
+                .hasSize(2)
+                .extracting(
+                        CompanyJpaEntity::getId,
+                        CompanyJpaEntity::getIndustry
+                )
+                .containsExactlyInAnyOrder(
+                        savedCompanies.subList(0, 2)
+                                .stream()
+                                .map(
+                                        company -> tuple(
+                                                company.getId(),
+                                                company.getIndustry()
+                                        )
+                                ).toArray(Tuple[]::new)
+                );
     }
 
     @Test
@@ -63,14 +81,14 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
         companyRepository.saveAll(companies);
         flushAndClear();
 
-        CompanySearchCondition condition = FM.giveMeBuilder(CompanySearchCondition.class)
+        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
                 .set("keywords", List.of("테크", "AI"))
                 .setNull("address").setNull("industry")
                 .set("offset", 0).set("limit", 10)
                 .sample();
 
         // when
-        List<CompanyJpaEntity> result = repository.loadCompanies(condition);
+        final var result = repository.loadCompaniesPage(condition);
 
         // then - OR 검색이 제대로 되었는지 결과로 확인
         assertThat(result).hasSize(2)
@@ -91,7 +109,7 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
         companyRepository.saveAll(companies);
         flushAndClear();
 
-        CompanySearchCondition condition = FM.giveMeBuilder(CompanySearchCondition.class)
+        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
                 .set("address", "서울")
                 .set("industry", "IT")
                 .setNull("keywords")
@@ -99,7 +117,7 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
                 .sample();
 
         // when
-        List<CompanyJpaEntity> result = repository.loadCompanies(condition);
+        final var result = repository.loadCompaniesPage(condition);
 
         // then - AND 조건이 제대로 적용되었는지 확인
         assertThat(result).hasSize(1)
@@ -113,19 +131,18 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
         // given - 시간 차이를 두고 저장
         CompanyJpaEntity oldCompany = createCompany("옛날회사", "IT");
         companyRepository.save(oldCompany);
-        flushAndClear();
 
         CompanyJpaEntity newCompany = createCompany("새회사", "IT");
         companyRepository.save(newCompany);
         flushAndClear();
 
-        CompanySearchCondition condition = FM.giveMeBuilder(CompanySearchCondition.class)
+        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
                 .setNull("address").setNull("industry").setNull("keywords")
                 .set("offset", 0).set("limit", 10)
                 .sample();
 
         // when
-        List<CompanyJpaEntity> result = repository.loadCompanies(condition);
+        final var result = repository.loadCompaniesPage(condition);
 
         // then - 최신 순으로 정렬되었는지 확인
         assertThat(result).hasSize(2)
@@ -145,14 +162,14 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
         companyRepository.saveAll(companies);
         flushAndClear();
 
-        CompanySearchCondition condition = FM.giveMeBuilder(CompanySearchCondition.class)
+        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
                 .set("industry", "IT")
                 .setNull("address").setNull("keywords")
                 .set("offset", 0).set("limit", 10)
                 .sample();
 
         // when
-        List<CompanyJpaEntity> loadResult = repository.loadCompanies(condition);
+        final var loadResult = repository.loadCompaniesPage(condition);
         long countResult = repository.countCompanies(condition);
 
         // then - 같은 조건으로 count와 load 결과가 일치하는지
@@ -160,16 +177,16 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
         assertThat(countResult).isEqualTo(2);
     }
 
-    private CompanyJpaEntity createCompany(String name, String industry) {
-        return FM.giveMeBuilder(CompanyJpaEntity.class)
+    private CompanyJpaEntity createCompany(final String name, final String industry) {
+        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
                 .set("name", name)
                 .set("industry", industry)
                 .set("jobs", null)
                 .sample();
     }
 
-    private CompanyJpaEntity createCompanyWithAddress(String name, String industry, String address) {
-        return FM.giveMeBuilder(CompanyJpaEntity.class)
+    private CompanyJpaEntity createCompanyWithAddress(final String name, final String industry, final String address) {
+        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
                  .set("name", name)
                  .set("industry", industry)
                  .set("address", address)
@@ -177,8 +194,8 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
                  .sample();
     }
 
-    private CompanyJpaEntity createCompanyWithDescription(String name, String industry, String description) {
-        return FM.giveMeBuilder(CompanyJpaEntity.class)
+    private CompanyJpaEntity createCompanyWithDescription(final String name, final String industry, final String description) {
+        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
                  .set("name", name)
                  .set("industry", industry)
                  .set("description", description)

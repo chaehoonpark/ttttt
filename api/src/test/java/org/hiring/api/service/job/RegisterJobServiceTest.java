@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hiring.api.common.testFixture.TestFixture.FM;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +34,7 @@ class RegisterJobServiceTest extends AbstractServiceTest {
     void registerJob_WithValidCompanyId_ShouldRegisterJob() {
         // given
         Long companyId = 1L;
-        CompanyJpaEntity company = FM.giveMeOne(CompanyJpaEntity.class);
+        CompanyJpaEntity company = fixtureMonkey.giveMeOne(CompanyJpaEntity.class);
         RegisterJobServiceRequest request = new RegisterJobServiceRequest(
             companyId, "채용공고 제목", "채용공고 설명",
             null, null, null, 3000, 5000,
