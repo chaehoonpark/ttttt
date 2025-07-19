@@ -5,10 +5,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.hiring.api.service.company.ModifyCompanyServiceRequest;
 
-import java.beans.ConstructorProperties;
-
 public record ModifyCompanyApiRequest(
-        // 수정 요청에서는 값이 들어온 필드만 검증합니다. (null 허용)
         @Size(max = 100, message = "회사명은 100자를 넘을 수 없습니다.")
         String name,
 
@@ -34,10 +31,7 @@ public record ModifyCompanyApiRequest(
         String address
 ) {
 
-    @ConstructorProperties({"name", "industry", "description", "employeeCount", "foundedYear", "logoUrl", "websiteUrl", "address"})
-    public ModifyCompanyApiRequest{}
-
-    public ModifyCompanyServiceRequest toServiceRequest(Long companyId) {
+    public ModifyCompanyServiceRequest toServiceRequest(final Long companyId) {
         return new ModifyCompanyServiceRequest(
                 companyId, name, industry, description, employeeCount,
                 foundedYear, logoUrl, websiteUrl, address

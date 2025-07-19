@@ -3,8 +3,6 @@ package org.hiring.api.controller.company;
 import jakarta.validation.constraints.*;
 import org.hiring.api.service.company.RegisterCompanyServiceRequest;
 
-import java.beans.ConstructorProperties;
-
 
 public record RegisterCompanyApiRequest(
         @NotBlank(message = "회사명은 필수입니다.")
@@ -35,9 +33,6 @@ public record RegisterCompanyApiRequest(
         @Size(max = 200, message = "주소는 200자를 넘을 수 없습니다.")
         String address
 ) {
-
-    @ConstructorProperties({"name", "industry", "description", "employeeCount", "foundedYear", "logoUrl", "websiteUrl", "address"})
-    public RegisterCompanyApiRequest {}
 
     public RegisterCompanyServiceRequest toServiceRequest() {
         return new RegisterCompanyServiceRequest(

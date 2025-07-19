@@ -2,8 +2,8 @@ package org.hiring.api.controller.job;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.BaseResponse;
-import org.example.PagedResult;
+import org.hiring.api.common.response.BaseResponse;
+import org.hiring.api.common.response.PagedResult;
 import org.hiring.api.domain.Job;
 import org.hiring.api.service.job.usecase.LoadJobUseCase;
 import org.hiring.api.service.job.usecase.ModifyJobUseCase;

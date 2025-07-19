@@ -15,8 +15,8 @@ public class RegisterCompanyService implements RegisterCompanyUseCase {
     private final CompanyRepository companyRepository;
 
     @Override
-    public void registerCompany(RegisterCompanyServiceRequest request) {
-        CompanyJpaEntity companyEntity = CompanyJpaEntity.builder()
+    public void registerCompany(final RegisterCompanyServiceRequest request) {
+        final var companyEntity = CompanyJpaEntity.builder()
             .name(request.name())
             .industry(request.industry())
             .description(request.description())

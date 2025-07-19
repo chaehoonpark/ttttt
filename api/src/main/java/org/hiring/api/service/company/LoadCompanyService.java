@@ -1,11 +1,9 @@
 package org.hiring.api.service.company;
 
 import jakarta.persistence.EntityNotFoundException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.PagedResult;
+import org.hiring.api.common.response.PagedResult;
 import org.hiring.api.domain.Company;
-import org.hiring.api.entity.CompanyJpaEntity;
 import org.hiring.api.mapper.CompanyMapper;
 import org.hiring.api.repository.company.CompanyRepository;
 import org.hiring.api.repository.company.query.CompanyQueryRepository;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LoadCompanyService implements LoadCompanyUseCase {
 
     private final CompanyMapper companyMapper;
@@ -27,7 +26,7 @@ public class LoadCompanyService implements LoadCompanyUseCase {
     @Override
     @Cacheable(value = "companies", key = "#request")
     public PagedResult<Company> loadCompanies(final LoadCompaniesServiceRequest request) {
-        CompanySearchCondition condition = CompanySearchCondition.builder()
+        final var condition = CompanySearchCondition.builder()
             .address(request.location())
             .industry(request.industry())
             .keywords(request.keywords())
@@ -35,11 +34,11 @@ public class LoadCompanyService implements LoadCompanyUseCase {
             .offset(request.getOffset())
             .build();
 
-        List<CompanyJpaEntity> companyEntities = companyQueryRepository.loadCompanies(condition);
+        final var companyEntities = companyQueryRepository.loadCompanies(condition);
 
-        long totalCount = companyQueryRepository.countCompanies(condition);
+        final var totalCount = companyQueryRepository.countCompanies(condition);
 
-        List<Company> companies = companyEntities.stream()
+        final var companies = companyEntities.stream()
             .map(companyMapper::toModel)
             .toList();
 

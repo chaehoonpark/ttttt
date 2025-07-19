@@ -1,8 +1,8 @@
 package org.hiring.api.service.company;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.PagedResult;
 import org.hiring.api.common.AbstractServiceTest;
+import org.hiring.api.common.response.PagedResult;
 import org.hiring.api.domain.Company;
 import org.hiring.api.entity.CompanyJpaEntity;
 import org.hiring.api.mapper.CompanyMapper;

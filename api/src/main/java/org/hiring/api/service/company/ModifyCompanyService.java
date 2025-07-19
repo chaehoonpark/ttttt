@@ -16,9 +16,9 @@ public class ModifyCompanyService implements ModifyCompanyUseCase {
     private final CompanyRepository companyRepository;
 
     @Override
-    public void modifyCompany(ModifyCompanyServiceRequest request) {
-        CompanyJpaEntity companyEntity = companyRepository.findById(request.companyId())
-            .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + request.companyId()));
+    public void modifyCompany(final ModifyCompanyServiceRequest request) {
+        final var companyEntity = companyRepository.findById(request.companyId())
+            .orElseThrow(() -> new EntityNotFoundException(String.format("Company not found with id: %s", request.companyId())));
 
         companyEntity.modifyCompany(
             request.name(),

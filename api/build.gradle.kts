@@ -21,7 +21,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation(project(":common"))
+//    implementation(project(":common"))
     implementation(project(":jpa"))
 
     runtimeOnly("com.h2database:h2")

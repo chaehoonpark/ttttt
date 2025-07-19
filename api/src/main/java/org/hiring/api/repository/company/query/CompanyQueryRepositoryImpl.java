@@ -9,6 +9,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.hiring.api.entity.CompanyJpaEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 @Repository
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<CompanyJpaEntity> loadCompanies(CompanySearchCondition condition) {
+    public List<CompanyJpaEntity> loadCompanies(final CompanySearchCondition condition) {
         return queryFactory
             .selectFrom(companyJpaEntity)
             .where(
@@ -34,7 +35,7 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
 
     @Override
     public long countCompanies(CompanySearchCondition condition) {
-        Long count = queryFactory
+        final var count = queryFactory
             .select(companyJpaEntity.count())
             .from(companyJpaEntity)
             .where(
@@ -47,18 +48,12 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
         return Objects.isNull(count) ? 0L : count;
     }
 
-    private BooleanExpression addressContains(String address) {
-        if (address == null || address.trim().isEmpty()) {
-            return null;
-        }
-        return companyJpaEntity.address.containsIgnoreCase(address);
+    private BooleanExpression addressContains(final String address) {
+        return StringUtils.hasText(address) ? companyJpaEntity.address.containsIgnoreCase(address) : null;
     }
 
     private BooleanExpression industryContains(String industry) {
-        if (industry == null || industry.trim().isEmpty()) {
-            return null;
-        }
-        return companyJpaEntity.industry.containsIgnoreCase(industry);
+        return StringUtils.hasText(industry) ? companyJpaEntity.industry.containsIgnoreCase(industry) : null;
     }
 
     private BooleanExpression keywordsContains(List<String> keywords) {
@@ -76,5 +71,10 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
             }
         }
         return expression;
+    }
+
+    private BooleanExpression keywordsLike(String keywords) {
+        return StringUtils.hasText(keywords) ? companyJpaEntity.name.containsIgnoreCase(keywords)
+                .or(companyJpaEntity.description.containsIgnoreCase(keywords)) : null;
     }
 }

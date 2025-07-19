@@ -20,8 +20,8 @@ public record LoadCompaniesApiRequest(
 
         @NotNull(message = "페이지 크기는 필수입니다.")
         @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
-        Integer size)
-{
+        Integer size
+) {
 
     public LoadCompaniesServiceRequest toServiceRequest() {
         return new LoadCompaniesServiceRequest(

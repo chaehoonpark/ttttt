@@ -1,6 +1,6 @@
 package org.hiring.api.service.job.usecase;
 
-import org.example.PagedResult;
+import org.hiring.api.common.response.PagedResult;
 import org.hiring.api.domain.Job;
 import org.hiring.api.service.job.LoadJobsServiceRequest;
 

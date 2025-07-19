@@ -8,55 +8,57 @@ import jakarta.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Getter
 @Table(name = "company")
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PRIVATE)
+@FieldDefaults(level = PRIVATE)
 public class CompanyJpaEntity extends org.example.entity.BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @NotBlank
     @Size(max = 100)
     @Column(nullable = false, length = 100)
-    private String name;
+    String name;
 
     @NotBlank
     @Size(max = 100)
     @Column(nullable = false, length = 100)
-    private String industry;
+    String industry;
 
     @Column
-    private String description;
+    String description;
 
     @Size(max = 50)
     @Column
-    private String employeeCount;
+    String employeeCount;
 
     @Max(2500)
     @NotNull
     @Column
-    private Integer foundedYear;
+    Integer foundedYear;
 
     @Size(max = 200)
     @Column(length = 200)
-    private String logoUrl;
+    String logoUrl;
 
     @Size(max = 200)
     @Column(length = 200)
-    private String websiteUrl;
+    String websiteUrl;
 
     @NotBlank
     @Size(max = 200)
     @Column(length = 200, nullable = false)
-    private String address;
+    String address;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<JobJpaEntity> jobs = new ArrayList<>();
+    List<JobJpaEntity> jobs = new ArrayList<>();
 
     @Builder
     public CompanyJpaEntity(String name, String industry, String description, String employeeCount, Integer foundedYear, String logoUrl, String websiteUrl, String address, List<JobJpaEntity> jobs) {

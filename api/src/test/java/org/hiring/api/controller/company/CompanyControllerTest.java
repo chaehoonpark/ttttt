@@ -37,12 +37,16 @@ class CompanyControllerTest extends AbstractControllerTest {
 
     @MockBean
     private RegisterCompanyUseCase registerCompanyUseCase;
+
     @MockBean
     private LoadCompanyUseCase loadCompanyUseCase;
+
     @MockBean
     private ModifyCompanyUseCase modifyCompanyUseCase;
+
     @MockBean
     private RemoveCompanyUseCase removeCompanyUseCase;
+
 
     @Nested
     @DisplayName("회사 등록 API (/api/v1/companies) [POST]")
@@ -62,7 +66,7 @@ class CompanyControllerTest extends AbstractControllerTest {
                     .content(objectMapper.writeValueAsString(request)));
 
             // then
-            actions.andExpect(status().isOk());
+            actions.andExpect(status().isCreated());
             verify(registerCompanyUseCase).registerCompany(any(RegisterCompanyServiceRequest.class));
         }
 

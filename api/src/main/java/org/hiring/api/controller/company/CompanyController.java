@@ -2,13 +2,14 @@ package org.hiring.api.controller.company;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.BaseResponse;
-import org.example.PagedResult;
+import org.hiring.api.common.response.BaseResponse;
+import org.hiring.api.common.response.PagedResult;
 import org.hiring.api.domain.Company;
 import org.hiring.api.service.company.usecase.LoadCompanyUseCase;
 import org.hiring.api.service.company.usecase.ModifyCompanyUseCase;
 import org.hiring.api.service.company.usecase.RegisterCompanyUseCase;
 import org.hiring.api.service.company.usecase.RemoveCompanyUseCase;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,16 +32,17 @@ public class CompanyController {
 
     @PostMapping
     public ResponseEntity<BaseResponse<Void>> registerCompany(
-        @Valid @RequestBody RegisterCompanyApiRequest request
+        @Valid @RequestBody final RegisterCompanyApiRequest request
     ) {
         registerCompanyUseCase.registerCompany(request.toServiceRequest());
-        return ResponseEntity.ok(BaseResponse.success());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(BaseResponse.created());
     }
 
     @PatchMapping("/{companyId}")
     public ResponseEntity<BaseResponse<Void>> modifyCompany(
-        @PathVariable Long companyId,
-        @Valid @RequestBody ModifyCompanyApiRequest request
+        @PathVariable final Long companyId,
+        @Valid @RequestBody final ModifyCompanyApiRequest request
     ) {
         modifyCompanyUseCase.modifyCompany(request.toServiceRequest(companyId));
         return ResponseEntity.ok(BaseResponse.success());
@@ -48,7 +50,7 @@ public class CompanyController {
 
     @DeleteMapping("/{companyId}")
     public ResponseEntity<BaseResponse<Void>> removeCompany(
-        @PathVariable Long companyId
+        @PathVariable final Long companyId
     ) {
         removeCompanyUseCase.removeCompany(companyId);
         return ResponseEntity.ok(BaseResponse.success());
@@ -56,17 +58,17 @@ public class CompanyController {
 
     @GetMapping("/{companyId}")
     public ResponseEntity<BaseResponse<Company>> loadCompany(
-        @PathVariable Long companyId
+        @PathVariable final Long companyId
     ) {
-        Company company = loadCompanyUseCase.loadCompany(companyId);
+        final var company = loadCompanyUseCase.loadCompany(companyId);
         return ResponseEntity.ok(BaseResponse.success(company));
     }
 
     @GetMapping
     public ResponseEntity<BaseResponse<PagedResult<Company>>> loadCompanies(
-        @Valid LoadCompaniesApiRequest request
+        @Valid final LoadCompaniesApiRequest request
     ) {
-        PagedResult<Company> companies = loadCompanyUseCase.loadCompanies(request.toServiceRequest());
+        final var companies = loadCompanyUseCase.loadCompanies(request.toServiceRequest());
         return ResponseEntity.ok(BaseResponse.success(companies));
     }
 }

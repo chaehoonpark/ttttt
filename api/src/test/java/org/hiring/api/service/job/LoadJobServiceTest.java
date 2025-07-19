@@ -1,7 +1,7 @@
 package org.hiring.api.service.job;
 
-import org.example.PagedResult;
 import org.hiring.api.common.AbstractServiceTest;
+import org.hiring.api.common.response.PagedResult;
 import org.hiring.api.domain.Job;
 import org.hiring.api.entity.JobJpaEntity;
 import org.hiring.api.entity.enums.EducationLevel;
