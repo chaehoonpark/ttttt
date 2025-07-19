@@ -36,18 +36,16 @@ import org.hiring.api.entity.enums.ExperienceLevel;
 public class JobJpaEntity extends BaseTimeEntity {
 
     @Id
-    @Column(name = "job_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name="company_id",nullable = false)
     private CompanyJpaEntity company;
 
     @Column(nullable = false, length = 255)
     private String title;
 
-    @Lob
     @Column()
     private String description;
 

@@ -1,5 +1,6 @@
 package org.hiring.api.service.company;
 
+import java.beans.ConstructorProperties;
 import java.util.List;
 
 public record LoadCompaniesServiceRequest(
@@ -18,4 +19,5 @@ public record LoadCompaniesServiceRequest(
     public int getLimit() {
         return size;
     }
+
 }

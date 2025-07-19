@@ -20,4 +20,8 @@ public abstract class AbstractJpaTest {
     @Autowired
     protected JPAQueryFactory queryFactory;
 
+    protected void flushAndClear() {
+        em.flush();
+        em.clear();
+    }
 }

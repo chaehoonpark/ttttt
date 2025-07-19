@@ -14,9 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles("test")
 public abstract class AbstractServiceTest {
 
-    @Autowired
-    protected EntityManager em;
-
     protected FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
         .objectIntrospector(FieldReflectionArbitraryIntrospector.INSTANCE)
         .plugin(new JakartaValidationPlugin())

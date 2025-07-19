@@ -44,7 +44,6 @@ public class JobQueryRepositoryImpl implements JobQueryRepository {
             .select(jobJpaEntity.count())
             .from(jobJpaEntity)
             .leftJoin(jobJpaEntity.company, companyJpaEntity)
-            .fetchJoin()
             .where(
                 keywordContains(condition.getKeyword()),
                 cityEquals(condition.getCity()),

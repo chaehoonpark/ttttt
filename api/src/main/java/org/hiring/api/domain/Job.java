@@ -9,8 +9,8 @@ import org.hiring.api.entity.enums.ExperienceLevel;
 
 public record Job(
     Long id,
-    Long companyId,         // 어느 회사 소속인지 ID로 관리
-    String companyName,     // 회사 이름도 함께 보여주면 편리
+    Long companyId,
+    String companyName,
     String title,
     String description,
     EmploymentType employmentType,

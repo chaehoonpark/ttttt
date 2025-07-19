@@ -1,6 +1,8 @@
 package org.hiring.api.service.job;
 
 import java.time.LocalDateTime;
+
+import lombok.Builder;
 import org.hiring.api.entity.enums.CityEnum;
 import org.hiring.api.entity.enums.DistrictEnum;
 import org.hiring.api.entity.enums.EducationLevel;

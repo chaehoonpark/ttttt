@@ -30,7 +30,6 @@ public class CompanyJpaEntity extends org.example.entity.BaseTimeEntity {
     @Column(nullable = false, length = 100)
     private String industry;
 
-    @Lob
     @Column
     private String description;
 
