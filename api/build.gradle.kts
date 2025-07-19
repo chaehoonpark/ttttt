@@ -43,6 +43,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    testImplementation("com.github.kstyrc:embedded-redis:0.6")
+
     // fixture-monkey
     testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.1.14")
     testImplementation("com.navercorp.fixturemonkey:fixture-monkey-jakarta-validation:1.1.14")

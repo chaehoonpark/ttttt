@@ -29,8 +29,10 @@ spring:
     init:
       mode: always
 
-  cache:
-    type: simple
+  data:
+    redis:
+      host: localhost
+      port: 63790 # 기존 레디스와 충돌하지 않는 임의의 포트
 
 # 로깅 설정
 logging:
@@ -40,8 +42,3 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.zaxxer.hikari: INFO
-
-# 픽스처 몽키 설정
-fixture-monkey:
-  default-not-null: true
-  default-arbitrary-generator: true
