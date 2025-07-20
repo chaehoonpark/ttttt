@@ -19,4 +19,13 @@ public record LoadCompaniesServiceRequest(
         return size;
     }
 
+    public String getKeywords() {
+        StringBuilder result =  new StringBuilder();
+
+        for (String keyword : keywords) {
+            result.append(keyword);
+        }
+
+        return result.toString();
+    }
 }

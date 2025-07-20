@@ -23,19 +23,15 @@ public class LoadCompanyService implements LoadCompanyUseCase {
     private final CompanyQueryRepository companyQueryRepository;
 
     @Override
-//    @Cacheable(value = "companies", key = "#request")
     public PagedResult<Company> loadCompanies(final LoadCompaniesServiceRequest request) {
         final var condition = CompanySearchCondition.builder()
             .address(request.location())
             .industry(request.industry())
-            .keywords(request.keywords())
             .limit(request.getLimit())
             .offset(request.getOffset())
             .build();
 
         final var companyEntities = companyQueryRepository.loadCompaniesPage(condition);
-
-//        final var totalCount = companyQueryRepository.countCompanies(condition);
 
         final var companies = companyEntities.stream()
             .map(companyMapper::toModel)

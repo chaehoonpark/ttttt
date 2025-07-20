@@ -28,20 +28,20 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
     @DisplayName("산업별 필터링이 정확히 동작한다")
     void filter_by_industry() {
         // given - 구분되는 데이터들
-        List<CompanyJpaEntity> companies = List.of(
-                createCompany("IT회사1", "IT"),
+        List<CompanyJpaEntity> companies = List.of(createCompany("IT회사1", "IT"),
                 createCompany("IT회사2", "IT"),
                 createCompany("금융회사", "금융"),
-                createCompany("제조회사", "제조")
-        );
+                createCompany("제조회사", "제조"));
 
         final var savedCompanies = companyRepository.saveAll(companies);
         flushAndClear();
 
-        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
-                .set("industry", "IT")
+        CompanySearchCondition condition = fixtureMonkey
+                .giveMeBuilder(CompanySearchCondition.class)
+                .setNull("name")
+                .setNull("description")
                 .setNull("address")
-                .setNull("keywords")
+                .set("industry", "IT")
                 .set("offset", 0)
                 .set("limit", 10)
                 .sample();
@@ -53,47 +53,12 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
         assertThat(actualResult)
                 .isNotEmpty()
                 .hasSize(2)
-                .extracting(
-                        CompanyJpaEntity::getId,
-                        CompanyJpaEntity::getIndustry
-                )
-                .containsExactlyInAnyOrder(
-                        savedCompanies.subList(0, 2)
-                                .stream()
-                                .map(
-                                        company -> tuple(
-                                                company.getId(),
-                                                company.getIndustry()
-                                        )
-                                ).toArray(Tuple[]::new)
-                );
-    }
-
-    @Test
-    @DisplayName("키워드 검색이 name과 description 모두에서 동작한다")
-    void searchKeywords() {
-        // given
-        List<CompanyJpaEntity> companies = List.of(
-                createCompanyWithDescription("테크솔루션", "IT", "일반 설명"),           // name 매칭
-                createCompanyWithDescription("일반회사", "금융", "AI 기술 전문회사"),      // description 매칭
-                createCompanyWithDescription("다른회사", "제조", "일반적인 제조업체")      // 매칭 안됨
-        );
-        companyRepository.saveAll(companies);
-        flushAndClear();
-
-        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
-                .set("keywords", List.of("테크", "AI"))
-                .setNull("address").setNull("industry")
-                .set("offset", 0).set("limit", 10)
-                .sample();
-
-        // when
-        final var result = repository.loadCompaniesPage(condition);
-
-        // then - OR 검색이 제대로 되었는지 결과로 확인
-        assertThat(result).hasSize(2)
-                .extracting("name")
-                .containsExactlyInAnyOrder("테크솔루션", "일반회사");
+                .extracting(CompanyJpaEntity::getId, CompanyJpaEntity::getIndustry)
+                .containsExactlyInAnyOrder(savedCompanies
+                        .subList(0, 2)
+                        .stream()
+                        .map(company -> tuple(company.getId(), company.getIndustry()))
+                        .toArray(Tuple[]::new));
     }
 
     @Test
@@ -101,28 +66,34 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
     void complexSearchWithAndCondition() {
         // given
         List<CompanyJpaEntity> companies = List.of(
-                createCompanyWithAddress("서울IT", "IT", "서울시 강남구"),         // 모든 조건 만족
-                createCompanyWithAddress("서울금융", "금융", "서울시 중구"),        // 주소만 만족
-                createCompanyWithAddress("부산IT", "IT", "부산시"),              // 산업만 만족
-                createCompanyWithAddress("경기IT", "IT", "경기도 성남시")          // 산업만 만족
+            createCompanyWithAddress("서울IT", "IT", "서울시 강남구"),         // 모든 조건 만족
+            createCompanyWithAddress("서울금융", "금융", "서울시 중구"),        // 주소만 만족
+            createCompanyWithAddress("부산IT", "IT", "부산시"),              // 산업만 만족
+            createCompanyWithAddress("경기IT", "IT", "경기도 성남시")          // 산업만 만족
         );
         companyRepository.saveAll(companies);
         flushAndClear();
 
-        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
+        CompanySearchCondition condition = fixtureMonkey
+                .giveMeBuilder(CompanySearchCondition.class)
+                .set("name", "서울")
+                .set("description", "")
                 .set("address", "서울")
                 .set("industry", "IT")
-                .setNull("keywords")
-                .set("offset", 0).set("limit", 10)
+                .set("offset", 0)
+                .set("limit", 10)
                 .sample();
 
         // when
         final var result = repository.loadCompaniesPage(condition);
 
-        // then - AND 조건이 제대로 적용되었는지 확인
-        assertThat(result).hasSize(1)
-                .extracting("name")
-                .containsExactly("서울IT");
+        // then
+        assertThat(result)
+            .hasSize(1)
+            .extracting(CompanyJpaEntity::getName, CompanyJpaEntity::getIndustry, CompanyJpaEntity::getAddress)
+            .containsExactlyInAnyOrder(
+                tuple("서울IT", "IT", "서울시 강남구")
+            );
     }
 
     @Test
@@ -136,18 +107,26 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
         companyRepository.save(newCompany);
         flushAndClear();
 
-        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
-                .setNull("address").setNull("industry").setNull("keywords")
-                .set("offset", 0).set("limit", 10)
+        CompanySearchCondition condition = fixtureMonkey
+                .giveMeBuilder(CompanySearchCondition.class)
+                .setNull("address")
+                .setNull("industry")
+                .setNull("keywords")
+                .set("offset", 0)
+                .set("limit", 10)
                 .sample();
 
         // when
         final var result = repository.loadCompaniesPage(condition);
 
-        // then - 최신 순으로 정렬되었는지 확인
-        assertThat(result).hasSize(2)
-                .extracting("name")
-                .containsExactly("새회사", "옛날회사"); // 최신순
+        // then
+        assertThat(result)
+            .hasSize(2)
+            .extracting(CompanyJpaEntity::getName, CompanyJpaEntity::getIndustry)
+            .containsExactly(
+                tuple("새회사", "IT"),
+                tuple("옛날회사", "IT")
+            );
     }
 
     @Test
@@ -155,30 +134,43 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
     void countAndLoadConsistency() {
         // given
         List<CompanyJpaEntity> companies = List.of(
-                createCompany("IT회사1", "IT"),
-                createCompany("IT회사2", "IT"),
-                createCompany("금융회사", "금융")
+            createCompany("IT회사1", "IT"),
+            createCompany("IT회사2", "IT"),
+            createCompany("금융회사", "금융")
         );
         companyRepository.saveAll(companies);
         flushAndClear();
 
-        CompanySearchCondition condition = fixtureMonkey.giveMeBuilder(CompanySearchCondition.class)
+        CompanySearchCondition condition = fixtureMonkey
+                .giveMeBuilder(CompanySearchCondition.class)
                 .set("industry", "IT")
-                .setNull("address").setNull("keywords")
-                .set("offset", 0).set("limit", 10)
+                .setNull("address")
+                .setNull("keywords")
+                .set("offset", 0)
+                .set("limit", 10)
                 .sample();
 
         // when
         final var loadResult = repository.loadCompaniesPage(condition);
         long countResult = repository.countCompanies(condition);
 
-        // then - 같은 조건으로 count와 load 결과가 일치하는지
-        assertThat(loadResult).hasSize((int) countResult);
+        // then
+        assertThat(loadResult)
+            .hasSize((int) countResult)
+            .extracting(CompanyJpaEntity::getName, CompanyJpaEntity::getIndustry)
+            .containsExactlyInAnyOrder(
+                tuple("IT회사1", "IT"),
+                tuple("IT회사2", "IT")
+            );
         assertThat(countResult).isEqualTo(2);
     }
 
+    // --- Helper Methods ---//
+
     private CompanyJpaEntity createCompany(final String name, final String industry) {
-        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
+        return fixtureMonkey
+                .giveMeBuilder(CompanyJpaEntity.class)
+                .set("id", null)
                 .set("name", name)
                 .set("industry", industry)
                 .set("jobs", null)
@@ -186,20 +178,22 @@ class CompanyQueryRepositoryImplTest extends AbstractJpaTest {
     }
 
     private CompanyJpaEntity createCompanyWithAddress(final String name, final String industry, final String address) {
-        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
-                 .set("name", name)
-                 .set("industry", industry)
-                 .set("address", address)
-                 .set("jobs", null)
-                 .sample();
+        return fixtureMonkey
+                .giveMeBuilder(CompanyJpaEntity.class)
+                .set("name", name)
+                .set("industry", industry)
+                .set("address", address)
+                .set("jobs", null)
+                .sample();
     }
 
     private CompanyJpaEntity createCompanyWithDescription(final String name, final String industry, final String description) {
-        return fixtureMonkey.giveMeBuilder(CompanyJpaEntity.class)
-                 .set("name", name)
-                 .set("industry", industry)
-                 .set("description", description)
-                 .set("jobs", null)
-                 .sample();
+        return fixtureMonkey
+                .giveMeBuilder(CompanyJpaEntity.class)
+                .set("name", name)
+                .set("industry", industry)
+                .set("description", description)
+                .set("jobs", null)
+                .sample();
     }
 }

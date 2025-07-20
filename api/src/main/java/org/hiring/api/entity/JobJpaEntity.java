@@ -20,7 +20,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.example.entity.BaseTimeEntity;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hiring.api.entity.enums.CityEnum;
 import org.hiring.api.entity.enums.DistrictEnum;
 import org.hiring.api.entity.enums.EducationLevel;
@@ -31,61 +33,63 @@ import org.hiring.api.entity.enums.ExperienceLevel;
 @Getter
 @Builder
 @Table(name = "job")
+@DynamicUpdate
+@FieldDefaults(level = PRIVATE)
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor(access = PRIVATE)
 public class JobJpaEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="company_id",nullable = false)
-    private CompanyJpaEntity company;
+    CompanyJpaEntity company;
 
     @Column(nullable = false, length = 255)
-    private String title;
+    String title;
 
     @Column()
-    private String description;
+    String description;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private EmploymentType employmentType;
+    EmploymentType employmentType;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private ExperienceLevel experienceLevel;
+    ExperienceLevel experienceLevel;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private EducationLevel educationLevel;
+    EducationLevel educationLevel;
 
     @Column()
-    private Integer salaryMin;
+    Integer salaryMin;
 
     @Column()
-    private Integer salaryMax;
+    Integer salaryMax;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private CityEnum city; // 근무지 (시/도)
+    CityEnum city; // 근무지 (시/도)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private DistrictEnum district; // 근무지 (구/군)
+    DistrictEnum district; // 근무지 (구/군)
 
     @Column(nullable = false)
-    private LocalDateTime postedAt; // 공고 등록일
+    LocalDateTime postedAt; // 공고 등록일
 
     @Column(nullable = false)
-    private LocalDateTime deadline;
+    LocalDateTime deadline;
 
     @Column(length = 1000)
-    private String requirements; // 자격 요건
+    String requirements; // 자격 요건
 
     @Column(length = 1000)
-    private String benefits; // 복리후생
+    String benefits; // 복리후생
 
     public void updateInfo(
         String title,

@@ -66,7 +66,10 @@ class JobQueryRepositoryImplTest extends AbstractJpaTest {
         List<JobJpaEntity> result = repository.loadJobs(condition);
 
         // then
-        assertThat(result).hasSize(2).extracting("title").containsExactlyInAnyOrder("백엔드 개발자", "프론트엔드 개발자");
+        assertThat(result)
+                .hasSize(2)
+                .extracting("title")
+                .containsExactlyInAnyOrder("백엔드 개발자", "프론트엔드 개발자");
     }
 
     @Test
@@ -262,9 +265,7 @@ class JobQueryRepositoryImplTest extends AbstractJpaTest {
         companyRepository.save(company);
         em.flush();
 
-        List<JobJpaEntity> jobs = List.of(createJobWithEmploymentType("정규직1", company, EmploymentType.FULL_TIME),
-                createJobWithEmploymentType("정규직2", company, EmploymentType.FULL_TIME),
-                createJobWithEmploymentType("계약직", company, EmploymentType.PART_TIME));
+        List<JobJpaEntity> jobs = List.of(createJobWithEmploymentType("정규직1", company, EmploymentType.FULL_TIME), createJobWithEmploymentType("정규직2", company, EmploymentType.FULL_TIME), createJobWithEmploymentType("계약직", company, EmploymentType.PART_TIME));
         jobRepository.saveAll(jobs);
         flushAndClear();
 

@@ -1,9 +1,12 @@
 package org.hiring.api.repository.company.query;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import java.util.List;
 import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.hiring.api.entity.CompanyJpaEntity;
 import org.springframework.data.domain.Page;
@@ -21,48 +24,37 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<CompanyJpaEntity> loadCompanies(final CompanySearchCondition condition) {
-        return queryFactory
-            .selectFrom(companyJpaEntity)
-            .where(
-                addressContains(condition.getAddress()),
-                industryContains(condition.getIndustry()),
-                keywordsContains(condition.getKeywords())
-            )
-            .orderBy(companyJpaEntity.createdAt.desc())
-            .offset(condition.getOffset())
-            .limit(condition.getLimit())
-            .fetch();
-    }
-
-    @Override
     public Page<CompanyJpaEntity> loadCompaniesPage(final CompanySearchCondition condition) {
-         final var query = queryFactory
+        final var query = queryFactory
                 .selectFrom(companyJpaEntity)
                 .where(
+                        nameContains(condition.getName()),
+                        descriptionContains(condition.getDescription()),
                         addressContains(condition.getAddress()),
-                        industryContains(condition.getIndustry()),
-                        keywordsContains(condition.getKeywords())
+                        industryContains(condition.getIndustry())
                 )
                 .orderBy(companyJpaEntity.createdAt.desc())
                 .offset(condition.getOffset())
                 .limit(condition.getLimit());
 
-        return PageableExecutionUtils.getPage(query.fetch(), Pageable.ofSize(condition.getLimit()), query::fetchCount);
+        return PageableExecutionUtils.getPage(query.fetch(),
+                Pageable.ofSize(condition.getLimit()),
+                query::fetchCount);
     }
 
 
     @Override
     public long countCompanies(CompanySearchCondition condition) {
         final var count = queryFactory
-            .select(companyJpaEntity.count())
-            .from(companyJpaEntity)
-            .where(
-                addressContains(condition.getAddress()),
-                industryContains(condition.getIndustry()),
-                keywordsContains(condition.getKeywords())
-            )
-            .fetchOne();
+                .select(companyJpaEntity.count())
+                .from(companyJpaEntity)
+                .where(
+                        nameContains(condition.getName()),
+                        descriptionContains(condition.getDescription()),
+                        addressContains(condition.getAddress()),
+                        industryContains(condition.getIndustry())
+                )
+                .fetchOne();
 
         return Objects.isNull(count) ? 0L : count;
     }
@@ -75,25 +67,11 @@ public class CompanyQueryRepositoryImpl implements CompanyQueryRepository {
         return StringUtils.hasText(industry) ? companyJpaEntity.industry.containsIgnoreCase(industry) : null;
     }
 
-    private BooleanExpression keywordsContains(List<String> keywords) {
-        if (keywords == null || keywords.isEmpty()) {
-            return null;
-        }
-        BooleanExpression expression = null;
-        for (String keyword : keywords) {
-            if (expression == null) {
-                expression = companyJpaEntity.name.containsIgnoreCase(keyword)
-                    .or(companyJpaEntity.description.containsIgnoreCase(keyword));
-            } else {
-                expression = expression.or(companyJpaEntity.name.containsIgnoreCase(keyword)
-                    .or(companyJpaEntity.description.containsIgnoreCase(keyword)));
-            }
-        }
-        return expression;
+    private BooleanExpression descriptionContains(String description) {
+        return StringUtils.hasText(description) ? companyJpaEntity.description.containsIgnoreCase(description) : null;
     }
 
-    private BooleanExpression keywordsLike(String keywords) {
-        return StringUtils.hasText(keywords) ? companyJpaEntity.name.containsIgnoreCase(keywords)
-                .or(companyJpaEntity.description.containsIgnoreCase(keywords)) : null;
+    private BooleanExpression nameContains(String name) {
+        return StringUtils.hasText(name) ? companyJpaEntity.name.containsIgnoreCase(name) : null;
     }
 }

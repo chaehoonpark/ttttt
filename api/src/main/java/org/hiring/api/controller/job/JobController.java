@@ -63,10 +63,10 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<BaseResponse<PagedResult<Job>>> loadJobs(
+    public ResponseEntity<BaseResponse<Void>> loadJobs(
         @Valid LoadJobsApiRequest request
     ) {
         PagedResult<Job> jobs = loadJobUseCase.loadJobs(request.toServiceRequest());
-        return ResponseEntity.ok(BaseResponse.success(jobs));
+        return ResponseEntity.ok(BaseResponse.created());
     }
 }

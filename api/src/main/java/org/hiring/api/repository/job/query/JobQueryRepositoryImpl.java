@@ -9,6 +9,9 @@ import org.hiring.api.entity.JobJpaEntity;
 import org.hiring.api.entity.enums.CityEnum;
 import org.hiring.api.entity.enums.DistrictEnum;
 import org.hiring.api.entity.enums.EmploymentType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import static org.hiring.api.entity.QCompanyJpaEntity.companyJpaEntity;
@@ -19,6 +22,30 @@ import static org.hiring.api.entity.QJobJpaEntity.jobJpaEntity;
 public class JobQueryRepositoryImpl implements JobQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Page<JobJpaEntity> loadJobss(JobSearchCondition condition) {
+
+        final var query = queryFactory
+                .selectFrom(jobJpaEntity)
+                .leftJoin(jobJpaEntity.company, companyJpaEntity)
+                .fetchJoin()
+                .where(
+                        keywordContains(condition.getKeyword()),
+                        cityEquals(condition.getCity()),
+                        districtEquals(condition.getDistrict()),
+                        employmentEquals(condition.getEmploymentType())
+                )
+                .orderBy(jobJpaEntity.createdAt.desc())
+                .offset(condition.getOffset())
+                .limit(condition.getLimit());
+
+        return PageableExecutionUtils.getPage(
+                query.fetch(),
+                Pageable.ofSize(condition.getLimit()),
+                query::fetchCount
+        );
+    }
 
     @Override
     public List<JobJpaEntity> loadJobs(JobSearchCondition condition) {

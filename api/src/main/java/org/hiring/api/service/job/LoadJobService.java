@@ -24,7 +24,7 @@ public class LoadJobService implements LoadJobUseCase {
     @Override
     public Job loadJob(final Long jobId) {
         final var entity = jobRepository.findById(jobId)
-            .orElseThrow(() -> new IllegalArgumentException(""));
+                                        .orElseThrow(() -> new IllegalArgumentException(""));
 
         return jobMapper.toModel(entity);
     }
@@ -33,26 +33,24 @@ public class LoadJobService implements LoadJobUseCase {
     @Cacheable(value = "jobs", key = "#request")
     public PagedResult<Job> loadJobs(final LoadJobsServiceRequest request) {
         final var condition = JobSearchCondition.builder()
-            .keyword(request.keyword())
-            .city(request.city())
-            .district(request.district())
-            .employmentType(request.employmentType())
-            .limit(request.getLimit())
-            .offset(request.getOffset())
-            .build();
+                                                .keyword(request.keyword())
+                                                .city(request.city())
+                                                .district(request.district())
+                                                .employmentType(request.employmentType())
+                                                .limit(request.getLimit())
+                                                .offset(request.getOffset())
+                                                .build();
 
-        final var jobEntities = jobQueryRepository.loadJobs(condition);
-
-        final var totalCount = jobQueryRepository.countJobs(condition);
+        final var jobEntities = jobQueryRepository.loadJobss(condition);
 
         final var jobs = jobEntities.stream().map(jobMapper::toModel)
-            .toList();
+                                    .toList();
 
         return PagedResult.of(
-            jobs,
-            request.page(),
-            request.size(),
-            totalCount
+                jobs,
+                request.page(),
+                request.size(),
+                jobEntities.getTotalElements()
         );
     }
 }
